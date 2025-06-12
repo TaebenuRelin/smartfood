@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,15 +10,10 @@ import Hero from "@/components/Hero";
 import Features from "@/components/Features";
 import FoodScanner from "@/components/FoodScanner";
 import Dashboard from "@/components/Dashboard";
-import { useFoods, useCategories } from '@/hooks/use-api';
-import { Skeleton } from '@/components/ui/skeleton';
-import { formatCurrency } from '@/lib/utils';
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<'home' | 'scanner' | 'dashboard'>('home');
   const { toast } = useToast();
-  const { data: foods, isLoading: isLoadingFoods, error: foodsError } = useFoods();
-  const { data: categories, isLoading: isLoadingCategories } = useCategories();
 
   const handleViewChange = (view: 'home' | 'scanner' | 'dashboard') => {
     setCurrentView(view);
@@ -26,16 +22,6 @@ const Index = () => {
       description: `Beralih ke ${view === 'home' ? 'beranda' : view === 'scanner' ? 'scanner makanan' : 'dashboard'}`,
     });
   };
-
-  if (foodsError) {
-    return (
-      <div className="container mx-auto p-4">
-        <div className="text-center text-red-500">
-          Error loading foods: {foodsError.message}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-smartfood-50 via-white to-smartfood-100">
@@ -104,87 +90,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-
-      <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-8">Menu Kami</h1>
-        
-        {/* Categories */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Kategori</h2>
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {isLoadingCategories ? (
-              Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-8 w-24" />
-              ))
-            ) : (
-              categories?.map((category) => (
-                <Badge
-                  key={category.id}
-                  variant="secondary"
-                  className="px-4 py-2 cursor-pointer hover:bg-primary hover:text-primary-foreground"
-                >
-                  {category.name}
-                </Badge>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* Food Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {isLoadingFoods ? (
-            Array.from({ length: 8 }).map((_, i) => (
-              <Card key={i} className="food-card-hover">
-                <CardHeader>
-                  <Skeleton className="h-48 w-full" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-6 w-3/4 mb-2" />
-                  <Skeleton className="h-4 w-1/2" />
-                </CardContent>
-              </Card>
-            ))
-          ) : (
-            foods?.map((food) => (
-              <Card key={food.id} className="food-card-hover">
-                <CardHeader className="p-0">
-                  <div className="relative h-48 w-full">
-                    {food.image_url ? (
-                      <img
-                        src={food.image_url}
-                        alt={food.name}
-                        className="w-full h-full object-cover rounded-t-lg"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-muted flex items-center justify-center">
-                        <span className="text-muted-foreground">No image</span>
-                      </div>
-                    )}
-                    <Badge
-                      className="absolute top-2 right-2"
-                      variant={food.is_available ? "default" : "destructive"}
-                    >
-                      {food.is_available ? "Tersedia" : "Habis"}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <CardTitle className="text-lg mb-1">{food.name}</CardTitle>
-                  <CardDescription className="mb-2">
-                    {food.description || "Tidak ada deskripsi"}
-                  </CardDescription>
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold text-primary">
-                      {formatCurrency(food.price)}
-                    </span>
-                    <Badge variant="outline">{food.categories.name}</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
-      </div>
     </div>
   );
 };

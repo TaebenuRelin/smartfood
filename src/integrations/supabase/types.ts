@@ -9,7 +9,154 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      users: {
+        Row: {
+          id: string
+          email: string
+          full_name: string
+          phone_number: string | null
+          address: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          full_name: string
+          phone_number?: string | null
+          address?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          full_name?: string
+          phone_number?: string | null
+          address?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      categories: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          image_url: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          image_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          image_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      foods: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          price: number
+          image_url: string | null
+          category_id: string
+          is_available: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          price: number
+          image_url?: string | null
+          category_id: string
+          is_available?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          price?: number
+          image_url?: string | null
+          category_id?: string
+          is_available?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      orders: {
+        Row: {
+          id: string
+          user_id: string
+          total_amount: number
+          status: string
+          payment_status: string
+          delivery_address: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          total_amount: number
+          status?: string
+          payment_status?: string
+          delivery_address: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          total_amount?: number
+          status?: string
+          payment_status?: string
+          delivery_address?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      order_items: {
+        Row: {
+          id: string
+          order_id: string
+          food_id: string
+          quantity: number
+          price_at_time: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          food_id: string
+          quantity: number
+          price_at_time: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          food_id?: string
+          quantity?: number
+          price_at_time?: number
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

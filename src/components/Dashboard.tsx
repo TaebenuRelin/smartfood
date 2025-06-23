@@ -1,11 +1,11 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, User, Target, TrendingUp, Calendar, Utensils, Award } from "lucide-react";
+import { ArrowLeft, User, Target, TrendingUp, Calendar, Utensils, Award, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface DashboardProps {
   onBackToHome: () => void;
@@ -13,6 +13,7 @@ interface DashboardProps {
 
 const Dashboard = ({ onBackToHome }: DashboardProps) => {
   const [activeTab, setActiveTab] = useState("overview");
+  const navigate = useNavigate();
 
   const todayStats = {
     calories: { consumed: 1850, target: 2200 },
@@ -41,19 +42,29 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-smartfood-50 to-white py-8">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="flex items-center mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={onBackToHome}
-            className="mr-4"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Kembali
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-smartfood-800">Dashboard Nutrisi</h1>
-            <p className="text-muted-foreground">Pantau progress dan capai target kesehatan Anda</p>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center">
+            <Button 
+              variant="ghost" 
+              onClick={onBackToHome}
+              className="mr-4"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Kembali
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-smartfood-800">Dashboard Nutrisi</h1>
+              <p className="text-muted-foreground">Pantau progress dan capai target kesehatan Anda</p>
+            </div>
           </div>
+          
+          <Button 
+            onClick={() => navigate('/food-management')}
+            className="bg-smartfood-600 hover:bg-smartfood-700"
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Kelola Makanan
+          </Button>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">

@@ -238,7 +238,7 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Nama</span>
-                    <span className="font-medium">Pengguna Demo</span>
+                    <span className="font-medium">Pengguna Alun</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Usia</span>

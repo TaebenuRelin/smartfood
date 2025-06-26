@@ -25,7 +25,8 @@ import Features from "@/components/Features";
 import FoodScanner from "@/components/FoodScanner";
 import Dashboard from "@/components/Dashboard";
 import ReminderAir from "@/components/ReminderAir";
-import MotivasiHarian from "@/components/MotivasiHarian"; // <-- Tambahkan import ini
+import MotivasiHarian from "@/components/MotivasiHarian";
+import UserGreeting from "@/components/UserGreeting"; // <-- Sudah diimport
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<
@@ -53,7 +54,8 @@ const Index = () => {
 
       {currentView === "home" && (
         <div className="animate-fade-in">
-          <MotivasiHarian /> {/* Tambahkan komponen ini di sini */}
+          <UserGreeting /> {/* <--- Sudah ditambahkan di awal blok home */}
+          <MotivasiHarian />
           <Hero onStartScanning={() => handleViewChange("scanner")} />
           <ReminderAir />
           <Features />

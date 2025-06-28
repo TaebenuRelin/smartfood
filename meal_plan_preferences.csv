@@ -1,0 +1,11 @@
+id,user_id,goal,daily_calorie_target,dietary_restrictions,meal_timings
+b1a1e1c1-0001-0001-0001-000000000001,3878f9c3-762a-42fe-955f-c6738fde3fe2,weight_loss,1500,seafood,"{""breakfast"":""07:00"",""lunch"":""12:00"",""dinner"":""19:00""}"
+b1a1e1c1-0001-0001-0001-000000000002,3878f9c3-762a-42fe-955f-c6738fde3fe2,maintenance,2000,dairy,"{""breakfast"":""06:30"",""lunch"":""12:30"",""dinner"":""18:30""}"
+b1a1e1c1-0001-0001-0001-000000000003,3878f9c3-762a-42fe-955f-c6738fde3fe2,muscle_gain,2500,gluten,"{""breakfast"":""08:00"",""lunch"":""13:00"",""dinner"":""20:00""}"
+b1a1e1c1-0001-0001-0001-000000000004,3878f9c3-762a-42fe-955f-c6738fde3fe2,weight_loss,1400,egg,"{""breakfast"":""07:15"",""lunch"":""12:15"",""dinner"":""19:15""}"
+b1a1e1c1-0001-0001-0001-000000000005,3878f9c3-762a-42fe-955f-c6738fde3fe2,maintenance,1800,peanut,"{""breakfast"":""06:45"",""lunch"":""12:45"",""dinner"":""18:45""}"
+b1a1e1c1-0001-0001-0001-000000000006,3878f9c3-762a-42fe-955f-c6738fde3fe2,muscle_gain,2700,soy,"{""breakfast"":""08:15"",""lunch"":""13:15"",""dinner"":""20:15""}"
+b1a1e1c1-0001-0001-0001-000000000007,3878f9c3-762a-42fe-955f-c6738fde3fe2,weight_loss,1600,fish,"{""breakfast"":""07:30"",""lunch"":""12:30"",""dinner"":""19:30""}"
+b1a1e1c1-0001-0001-0001-000000000008,3878f9c3-762a-42fe-955f-c6738fde3fe2,maintenance,2100,shrimp,"{""breakfast"":""06:00"",""lunch"":""12:00"",""dinner"":""18:00""}"
+b1a1e1c1-0001-0001-0001-000000000009,3878f9c3-762a-42fe-955f-c6738fde3fe2,muscle_gain,2600,beef,"{""breakfast"":""08:30"",""lunch"":""13:30"",""dinner"":""20:30""}"
+b1a1e1c1-0001-0001-0001-000000000010,3878f9c3-762a-42fe-955f-c6738fde3fe2,weight_loss,1550,gluten,"{""breakfast"":""07:45"",""lunch"":""12:45"",""dinner"":""19:45""}"

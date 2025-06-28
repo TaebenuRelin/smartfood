@@ -1,25 +1,30 @@
 import React from "react";
+import { useRandomMotivasi } from "@/hooks/useMotivasi";
 
-const motivasiList = [
-  "Tetap semangat hidup sehat hari ini!",
-  "Satu langkah kecil setiap hari menuju kesehatan.",
-  "Jaga pola makan, jaga masa depan.",
-  "Air putih dan senyum adalah kunci awet muda.",
-  "Kesehatan adalah investasi terbaik.",
-  "Jangan menyerah, kamu sudah hebat sampai di titik ini!",
-];
+const MotivasiHarian: React.FC = () => {
+  const { data: motivasi, isLoading, error } = useRandomMotivasi();
 
-function getMotivasiHarian() {
-  // Motivasi berganti setiap hari berdasarkan tanggal
-  const today = new Date();
-  const index = today.getDate() % motivasiList.length;
-  return motivasiList[index];
-}
+  if (isLoading) {
+    return (
+      <div className="bg-smartfood-100 text-smartfood-800 text-center py-2 rounded mb-4 font-semibold">
+        Memuat motivasi...
+      </div>
+    );
+  }
 
-const MotivasiHarian: React.FC = () => (
-  <div className="bg-smartfood-100 text-smartfood-800 text-center py-2 rounded mb-4 font-semibold">
-    {getMotivasiHarian()}
-  </div>
-);
+  if (error) {
+    return (
+      <div className="bg-smartfood-100 text-smartfood-800 text-center py-2 rounded mb-4 font-semibold">
+        Tetap semangat hidup sehat hari ini!
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-smartfood-100 text-smartfood-800 text-center py-2 rounded mb-4 font-semibold">
+      {motivasi?.pesan || "Tetap semangat hidup sehat hari ini!"}
+    </div>
+  );
+};
 
 export default MotivasiHarian;

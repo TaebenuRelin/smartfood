@@ -5,10 +5,8 @@ import {
   createFood, 
   updateFood, 
   deleteFood,
-  type Food,
-  type CreateFoodData,
-  type UpdateFoodData
-} from '@/lib/api';
+  type Food
+} from '@/lib/supabaseApi';
 import { toast } from 'sonner';
 
 // Query keys
@@ -59,11 +57,11 @@ export const useUpdateFood = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateFoodData }) => 
+    mutationFn: ({ id, data }: { id: string; data: Partial<Food> }) => 
       updateFood(id, data),
     onSuccess: (updatedFood) => {
       queryClient.invalidateQueries({ queryKey: foodKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: foodKeys.detail(updatedFood._id) });
+      queryClient.invalidateQueries({ queryKey: foodKeys.detail(updatedFood.id) });
       toast.success('Makanan berhasil diperbarui!');
     },
     onError: (error) => {

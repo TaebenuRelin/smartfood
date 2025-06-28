@@ -1,0 +1,130 @@
+name,calories,protein,carbs,fat,portion
+Nasi Goreng,350,10,50,12,1 porsi
+Ayam Bakar,250,20,2,15,1 potong
+Jus Jeruk,90,1,22,0,1 gelas
+Salad Buah,120,2,28,1,1 mangkok
+Roti Gandum,80,3,15,1,2 lembar
+Sate Ayam,200,15,5,10,5 tusuk
+Soto Ayam,180,12,8,7,1 mangkok
+Bakso,220,14,20,8,1 mangkok
+Mie Goreng,320,8,45,10,1 porsi
+Gado-Gado,250,7,30,12,1 porsi
+Pecel Lele,300,18,5,20,1 porsi
+Nasi Uduk,400,10,60,15,1 porsi
+Nasi Kuning,370,9,55,13,1 porsi
+Sop Buntut,350,18,15,20,1 mangkok
+Es Teh Manis,100,0,25,0,1 gelas
+Es Jeruk,90,1,22,0,1 gelas
+Kopi Hitam,5,0,0,0,1 gelas
+Teh Hijau,2,0,0,0,1 gelas
+Smoothie Pisang,180,4,35,2,1 gelas
+Susu Coklat,150,5,22,4,1 gelas
+Pisang Goreng,180,2,30,7,2 buah
+Donat,250,4,40,10,1 buah
+Kue Lapis,120,1,25,2,2 potong
+Brownies,300,5,40,15,1 potong
+Puding Coklat,180,3,35,4,1 cup
+Martabak Manis,400,7,60,15,1 potong
+Keripik Kentang,150,2,18,8,1 bungkus
+Kacang Goreng,200,7,8,15,1 genggam
+Omelet,180,10,5,12,1 porsi
+Sup Ayam,150,8,12,5,1 mangkok
+Nasi Putih,175,3,38,0,1 porsi
+Tempe Goreng,120,7,8,7,2 potong
+Tahu Goreng,100,6,5,6,2 potong
+Susu Kedelai,80,6,8,2,1 gelas
+Jus Apel,95,0,24,0,1 gelas
+Jus Mangga,110,1,27,0,1 gelas
+Jus Alpukat,180,3,15,12,1 gelas
+Sereal,200,6,35,4,1 mangkok
+Granola,220,7,30,8,1 mangkok
+Yogurt,90,5,12,2,1 cup
+Kue Cubit,100,2,18,3,4 buah
+Kue Lumpur,120,2,22,4,2 buah
+Kue Nastar,80,1,12,3,3 buah
+Kue Putri Salju,90,1,14,4,3 buah
+Kue Kastengel,100,2,10,6,3 buah
+Kue Sagu,80,1,10,3,3 buah
+Kue Semprit,85,1,12,4,3 buah
+Kue Biji Ketapang,90,1,13,4,3 buah
+Kue Kering Coklat,100,2,15,5,3 buah
+Kue Kering Kacang,110,3,12,6,3 buah
+Kue Kering Keju,105,2,11,6,3 buah
+Kue Kering Jahe,95,1,14,4,3 buah
+Kue Kering Wijen,100,2,13,5,3 buah
+Kue Kering Pandan,90,1,12,4,3 buah
+Kue Kering Susu,95,1,13,4,3 buah
+Nasi Goreng Seafood,370,12,52,13,1 porsi
+Nasi Goreng Spesial,380,13,54,14,1 porsi
+Nasi Goreng Kampung,360,11,51,12,1 porsi
+Nasi Goreng Jawa,355,10,50,12,1 porsi
+Nasi Goreng Telur,340,9,48,11,1 porsi
+Nasi Goreng Ayam,350,10,50,12,1 porsi
+Nasi Goreng Pete,360,11,51,12,1 porsi
+Nasi Goreng Kambing,390,14,53,15,1 porsi
+Nasi Goreng Mawut,370,12,52,13,1 porsi
+Nasi Goreng Merah,350,10,50,12,1 porsi
+Nasi Goreng Hongkong,360,11,51,12,1 porsi
+Nasi Goreng Ikan Asin,370,12,52,13,1 porsi
+Nasi Goreng Sosis,355,10,50,12,1 porsi
+Nasi Goreng Kornet,360,11,51,12,1 porsi
+Nasi Goreng Daging,380,13,54,14,1 porsi
+Nasi Goreng Sayur,340,9,48,11,1 porsi
+Nasi Goreng Teri,350,10,50,12,1 porsi
+Nasi Goreng Udang,370,12,52,13,1 porsi
+Nasi Goreng Bakso,355,10,50,12,1 porsi
+Nasi Goreng Spicy,360,11,51,12,1 porsi
+Nasi Goreng Keju,380,13,54,14,1 porsi
+Nasi Goreng Tomat,340,9,48,11,1 porsi
+Nasi Goreng Paprika,350,10,50,12,1 porsi
+Nasi Goreng Jamur,360,11,51,12,1 porsi
+Nasi Goreng Tuna,370,12,52,13,1 porsi
+Nasi Goreng Telur Asin,355,10,50,12,1 porsi
+Nasi Goreng Mentega,360,11,51,12,1 porsi
+Nasi Goreng Sambal,380,13,54,14,1 porsi
+Nasi Goreng Bawang,340,9,48,11,1 porsi
+Nasi Goreng Daging Asap,350,10,50,12,1 porsi
+Nasi Goreng Sapi,370,12,52,13,1 porsi
+Nasi Goreng Ayam Suwir,355,10,50,12,1 porsi
+Nasi Goreng Kornet Sapi,360,11,51,12,1 porsi
+Nasi Goreng Sosis Ayam,380,13,54,14,1 porsi
+Nasi Goreng Seafood Pedas,340,9,48,11,1 porsi
+Nasi Goreng Udang Pedas,350,10,50,12,1 porsi
+Nasi Goreng Tuna Pedas,360,11,51,12,1 porsi
+Nasi Goreng Jamur Pedas,370,12,52,13,1 porsi
+Nasi Goreng Paprika Pedas,355,10,50,12,1 porsi
+Nasi Goreng Keju Pedas,360,11,51,12,1 porsi
+Nasi Goreng Tomat Pedas,380,13,54,14,1 porsi
+Nasi Goreng Spesial Pedas,340,9,48,11,1 porsi
+Nasi Goreng Mawut Pedas,350,10,50,12,1 porsi
+Nasi Goreng Hongkong Pedas,360,11,51,12,1 porsi
+Nasi Goreng Kampung Pedas,370,12,52,13,1 porsi
+Nasi Goreng Telur Pedas,355,10,50,12,1 porsi
+Nasi Goreng Ayam Pedas,360,11,51,12,1 porsi
+Nasi Goreng Pete Pedas,380,13,54,14,1 porsi
+Nasi Goreng Kambing Pedas,340,9,48,11,1 porsi
+Nasi Goreng Mawut Spesial,350,10,50,12,1 porsi
+Nasi Goreng Mawut Seafood,360,11,51,12,1 porsi
+Nasi Goreng Mawut Ayam,370,12,52,13,1 porsi
+Nasi Goreng Mawut Sosis,355,10,50,12,1 porsi
+Nasi Goreng Mawut Kornet,360,11,51,12,1 porsi
+Nasi Goreng Mawut Daging,380,13,54,14,1 porsi
+Nasi Goreng Mawut Sayur,340,9,48,11,1 porsi
+Nasi Goreng Mawut Teri,350,10,50,12,1 porsi
+Nasi Goreng Mawut Udang,370,12,52,13,1 porsi
+Nasi Goreng Mawut Bakso,355,10,50,12,1 porsi
+Nasi Goreng Mawut Spicy,360,11,51,12,1 porsi
+Nasi Goreng Mawut Keju,380,13,54,14,1 porsi
+Nasi Goreng Mawut Tomat,340,9,48,11,1 porsi
+Nasi Goreng Mawut Paprika,350,10,50,12,1 porsi
+Nasi Goreng Mawut Jamur,360,11,51,12,1 porsi
+Nasi Goreng Mawut Tuna,370,12,52,13,1 porsi
+Nasi Goreng Mawut Telur Asin,355,10,50,12,1 porsi
+Nasi Goreng Mawut Mentega,360,11,51,12,1 porsi
+Nasi Goreng Mawut Sambal,380,13,54,14,1 porsi
+Nasi Goreng Mawut Bawang,340,9,48,11,1 porsi
+Nasi Goreng Mawut Daging Asap,350,10,50,12,1 porsi
+Nasi Goreng Mawut Sapi,370,12,52,13,1 porsi
+Nasi Goreng Mawut Ayam Suwir,355,10,50,12,1 porsi
+Nasi Goreng Mawut Kornet Sapi,360,11,51,12,1 porsi
+Nasi Goreng Mawut Sosis Ayam,380,13,54,14,1 porsi

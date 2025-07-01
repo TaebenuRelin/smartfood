@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,8 @@ import { ArrowLeft, User, Target, TrendingUp, Calendar, Utensils, Award, Setting
 import { useNavigate } from "react-router-dom";
 import { analyzeFood } from '@/lib/api';
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
+import axios from "axios";
 
 interface DashboardProps {
   onBackToHome: () => void;
@@ -20,6 +22,15 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
   const [input, setInput] = useState('');
   const [result, setResult] = useState(null);
   const [foodHistory, setFoodHistory] = useState<any[]>([]);
+  const [editProfile, setEditProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    targetCalories: user?.targetCalories || 2000,
+    height: user?.height || 170,
+    weight: user?.weight || 65,
+    targetPurpose: user?.targetPurpose || 'jaga berat badan',
+  });
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const { toast } = useToast();
 
   const todayStats = {
     calories: { consumed: 1850, target: 2200 },
@@ -45,20 +56,100 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
     { day: "Min", calories: 0 }
   ];
 
+  const getNutritionNeeds = (user) => {
+    if (!user) return null;
+    // Rumus kebutuhan kalori dasar (Mifflin-St Jeor, asumsi laki-laki, usia 25)
+    const weight = user.weight || 65;
+    const height = user.height || 170;
+    const age = 25;
+    let bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+    let multiplier = 1.4; // asumsi aktivitas ringan
+    let calories = bmr * multiplier;
+    let protein = weight * 1.2;
+    let fat = weight * 0.8;
+    let carbs = (calories - (protein * 4 + fat * 9)) / 4;
+    // Penyesuaian target
+    if (user.targetPurpose === 'menurunkan berat badan') calories *= 0.8;
+    if (user.targetPurpose === 'menaikkan berat badan') calories *= 1.15;
+    if (user.targetPurpose === 'diet') calories *= 0.9;
+    return {
+      calories: Math.round(calories),
+      protein: Math.round(protein),
+      fat: Math.round(fat),
+      carbs: Math.round(carbs),
+    };
+  };
+
+  const foodTodaySuggestions = {
+    'menurunkan berat badan': [
+      { name: 'Dada Ayam Rebus', time: '08:00', calories: 120, icon: '🍗' },
+      { name: 'Salad Sayur', time: '12:30', calories: 90, icon: '🥗' },
+      { name: 'Oatmeal', time: '15:00', calories: 150, icon: '🥣' },
+      { name: 'Ikan Kukus', time: '19:00', calories: 180, icon: '🐟' },
+    ],
+    'menaikkan berat badan': [
+      { name: 'Nasi Goreng', time: '08:00', calories: 420, icon: '🍳' },
+      { name: 'Daging Sapi', time: '12:30', calories: 350, icon: '🥩' },
+      { name: 'Susu Full Cream', time: '15:00', calories: 200, icon: '🥛' },
+      { name: 'Alpukat', time: '19:00', calories: 250, icon: '🥑' },
+    ],
+    'jaga berat badan': [
+      { name: 'Nasi Gudeg', time: '08:00', calories: 420, icon: '🍛' },
+      { name: 'Gado-gado', time: '12:30', calories: 380, icon: '🥗' },
+      { name: 'Pisang Goreng', time: '15:00', calories: 180, icon: '🍌' },
+      { name: 'Nasi Goreng', time: '19:00', calories: 385, icon: '🍳' },
+    ],
+    'diet': [
+      { name: 'Oatmeal', time: '08:00', calories: 150, icon: '🥣' },
+      { name: 'Telur Rebus', time: '12:30', calories: 80, icon: '🥚' },
+      { name: 'Smoothie Buah', time: '15:00', calories: 120, icon: '🍓' },
+      { name: 'Salad Sayur', time: '19:00', calories: 90, icon: '🥗' },
+    ],
+  };
+
   const handleAnalyze = async () => {
     const data = await analyzeFood(input);
     setResult(data);
   };
 
+  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setProfileForm({ ...profileForm, [e.target.name]: e.target.value });
+  };
+
+  const handleProfileSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingProfile(true);
+    try {
+      await axios.patch('/api/auth/profile', {
+        userId: user.id,
+        ...profileForm,
+      });
+      toast && toast({
+        title: 'Profil Berhasil Disimpan',
+        description: 'Data profil berhasil diperbarui.',
+        variant: 'default',
+      });
+      window.location.reload();
+    } catch (error: any) {
+      toast && toast({
+        title: 'Gagal Menyimpan Profil',
+        description: error.response?.data?.error || 'Terjadi kesalahan.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
+
   useEffect(() => {
-    if (activeTab === 'history') {
-      fetch('http://localhost:3000/api/foods/history')
+    if (activeTab === 'history' && user) {
+      fetch(`http://localhost:3000/api/nutrition-logs/${user.id}`)
         .then(res => res.json())
         .then(data => {
-          if (data.success) setFoodHistory(data.histories);
+          if (data.success) setFoodHistory(data.data);
         });
     }
-  }, [activeTab]);
+  }, [activeTab, user]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-smartfood-50 to-white py-8">
@@ -78,14 +169,6 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
               <p className="text-muted-foreground">Pantau progress dan capai target kesehatan Anda</p>
             </div>
           </div>
-          
-          <Button 
-            onClick={() => navigate('/food-management')}
-            className="bg-smartfood-600 hover:bg-smartfood-700"
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            Kelola Makanan
-          </Button>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
@@ -220,9 +303,9 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {recentMeals.map((meal, index) => (
+                    {(foodTodaySuggestions[user?.targetPurpose] || foodTodaySuggestions['jaga berat badan']).map((meal, index) => (
                       <div key={index} className="flex items-center space-x-4 p-3 bg-smartfood-50 rounded-lg">
-                        <span className="text-2xl">{meal.image}</span>
+                        <span className="text-2xl">{meal.icon}</span>
                         <div className="flex-1">
                           <div className="font-medium">{meal.name}</div>
                           <div className="text-sm text-muted-foreground">{meal.time}</div>
@@ -261,25 +344,24 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
                       <Card key={item._id} className="border border-green-200">
                         <CardContent className="py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                           <div>
-                            <div className="font-bold text-lg text-green-700">{item.foodName || item.nama}</div>
-                            <div className="text-sm text-muted-foreground">{new Date(item.timestamp).toLocaleString('id-ID')}</div>
-                            <div className="text-xs text-muted-foreground">{item.kategori}</div>
+                            <div className="font-bold text-lg text-green-700">{item.foodName}</div>
+                            <div className="text-sm text-muted-foreground">{new Date(item.createdAt).toLocaleString('id-ID')}</div>
                           </div>
                           <div className="flex gap-6">
                             <div className="text-center">
-                              <div className="font-bold text-green-700">{item.nutrisi?.kalori ?? '-'}</div>
+                              <div className="font-bold text-green-700">{item.calories ?? '-'}</div>
                               <div className="text-xs">Kalori</div>
                             </div>
                             <div className="text-center">
-                              <div className="font-bold text-blue-700">{item.nutrisi?.protein ?? '-'}</div>
+                              <div className="font-bold text-blue-700">{item.protein ?? '-'}</div>
                               <div className="text-xs">Protein</div>
                             </div>
                             <div className="text-center">
-                              <div className="font-bold text-yellow-700">{item.nutrisi?.karbohidrat ?? '-'}</div>
+                              <div className="font-bold text-yellow-700">{item.carbs ?? '-'}</div>
                               <div className="text-xs">Karbo</div>
                             </div>
                             <div className="text-center">
-                              <div className="font-bold text-red-700">{item.nutrisi?.lemak ?? '-'}</div>
+                              <div className="font-bold text-red-700">{item.fat ?? '-'}</div>
                               <div className="text-xs">Lemak</div>
                             </div>
                           </div>
@@ -316,21 +398,21 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Berat Badan</span>
-                    <span className="font-medium">65 kg</span>
+                    <span className="font-medium">{user?.weight ? user.weight + ' kg' : '-'}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Tinggi Badan</span>
-                    <span className="font-medium">170 cm</span>
+                    <span className="font-medium">{user?.height ? user.height + ' cm' : '-'}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Target Kalori</span>
+                    <span className="font-medium">{user?.targetCalories ? user.targetCalories + ' kal' : '-'}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Target</span>
-                    <Badge variant="secondary" className="bg-green-100 text-green-800">Menjaga Berat</Badge>
+                    <Badge variant="secondary" className="bg-green-100 text-green-800">{user?.targetPurpose || '-'}</Badge>
                   </div>
                 </div>
-                <Button variant="outline" className="mt-6 w-full">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Edit Profil
-                </Button>
               </CardContent>
             </Card>
           </TabsContent>

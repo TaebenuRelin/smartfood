@@ -5,6 +5,11 @@ interface User {
   id: string;
   name: string;
   email: string;
+  targetCalories?: number;
+  height?: number;
+  weight?: number;
+  targetPurpose?: string;
+  targetWeight?: number;
 }
 
 interface AuthContextType {

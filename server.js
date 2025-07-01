@@ -9,6 +9,7 @@ import analyzeRoutes from './routes/analyzeRoutes.js';
 import geminiFoodAnalysisRoutes from './routes/geminiFoodAnalysisRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import errorHandler from './middleware/error.js';
+import nutritionLogRoutes from './routes/nutritionLogRoutes.js';
 
 // --- DIAGNOSTIC LOG ---
 if (authRoutes) {
@@ -51,6 +52,7 @@ app.use('/api/foods', foodsRoute);
 app.use('/api/analyze', analyzeRoutes);
 app.use('/api/gemini-food-analysis', geminiFoodAnalysisRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/nutrition-logs', nutritionLogRoutes);
 
 // Error Handler Middleware (should be last)
 app.use(errorHandler);

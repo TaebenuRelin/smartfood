@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import multer from "multer";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface FoodScannerProps {
   onBackToHome: () => void;
@@ -28,6 +29,7 @@ const FoodScanner = ({ onBackToHome }: FoodScannerProps) => {
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -110,12 +112,21 @@ const FoodScanner = ({ onBackToHome }: FoodScannerProps) => {
   };
 
   const handleSaveHistory = async () => {
-    if (!analysisResult) return;
+    if (!analysisResult || !user) return;
     try {
-      const response = await fetch('http://localhost:3000/api/foods/history', {
+      const payload = {
+        user: user.id,
+        foodName: analysisResult.foodName || analysisResult.nama,
+        calories: analysisResult.nutrition?.calories || analysisResult.nutrition?.kalori,
+        protein: analysisResult.nutrition?.protein,
+        fat: analysisResult.nutrition?.fat || analysisResult.nutrition?.lemak,
+        carbs: analysisResult.nutrition?.carbs || analysisResult.nutrition?.karbohidrat,
+        createdAt: new Date().toISOString(),
+      };
+      const response = await fetch('http://localhost:3000/api/nutrition-logs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(analysisResult),
+        body: JSON.stringify(payload),
       });
       const data = await response.json();
       if (data.success) {

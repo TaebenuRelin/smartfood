@@ -21,6 +21,10 @@ export const register = async (req, res, next) => {
     sendTokenResponse(user, 201, res);
 
   } catch (err) {
+    // Tangani error duplicate key email
+    if (err.code === 11000 && err.keyPattern && err.keyPattern.email) {
+      return res.status(400).json({ success: false, error: 'Email sudah terdaftar, gunakan email lain.' });
+    }
     next(err);
   }
 };
@@ -76,9 +80,29 @@ const sendTokenResponse = (user, statusCode, res) => {
       success: true,
       token,
       user: {
+        _id: user._id,
         id: user._id,
         name: user.name,
         email: user.email,
       }
     });
+};
+
+export const updateProfile = async (req, res, next) => {
+  try {
+    const { userId, targetCalories, height, weight, targetPurpose, targetWeight } = req.body;
+    const updateFields = { targetCalories, height, weight, targetPurpose };
+    if (targetWeight !== undefined) updateFields.targetWeight = targetWeight;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: updateFields },
+      { new: true, runValidators: true }
+    );
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+    res.json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 }; 

@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from '../config/db.js';
 import foodsRoute from './foodRoutesDB.js';
+import authRoutes from './routes/authRoutes.js';
 
 // Load env vars
 dotenv.config({ path: '../config.env' });
@@ -16,6 +17,7 @@ connectDB();
 
 // Import route foods
 app.use('/api/foods', foodsRoute); // Akses di /api/foods
+app.use('/api/auth', authRoutes);
 
 // Jalankan server di port 3000
 const PORT = process.env.PORT || 3000;

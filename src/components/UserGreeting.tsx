@@ -13,37 +13,7 @@ const UserGreeting: React.FC = () => {
     setEditing(false);
   };
 
-  return (
-    <div className="text-right text-sm text-smartfood-700 mb-2">
-      {editing ? (
-        <span>
-          <input
-            type="text"
-            className="border rounded px-1 text-black"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSave();
-            }}
-            autoFocus
-          />
-          <button onClick={handleSave} className="ml-2 text-xs text-blue-600">
-            Simpan
-          </button>
-        </span>
-      ) : (
-        <span>
-          Halo, <span className="font-semibold">{username}</span>!{" "}
-          <button
-            onClick={() => setEditing(true)}
-            className="text-xs text-blue-600"
-          >
-            Ganti nama
-          </button>
-        </span>
-      )}
-    </div>
-  );
+  return null;
 };
 
 export default UserGreeting;

@@ -30,6 +30,27 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  targetCalories: {
+    type: Number,
+    default: 2000,
+  },
+  height: {
+    type: Number,
+    default: 170,
+  },
+  weight: {
+    type: Number,
+    default: 65,
+  },
+  targetPurpose: {
+    type: String,
+    enum: ['diet', 'jaga berat badan', 'menurunkan berat badan', 'menaikkan berat badan'],
+    default: 'jaga berat badan',
+  },
+  targetWeight: {
+    type: Number,
+    default: 0,
+  },
 });
 
 // Encrypt password using bcrypt

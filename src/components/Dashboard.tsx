@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +6,8 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, User, Target, TrendingUp, Calendar, Utensils, Award, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { analyzeFood } from '@/lib/api';
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardProps {
   onBackToHome: () => void;
@@ -14,6 +16,10 @@ interface DashboardProps {
 const Dashboard = ({ onBackToHome }: DashboardProps) => {
   const [activeTab, setActiveTab] = useState("overview");
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [input, setInput] = useState('');
+  const [result, setResult] = useState(null);
+  const [foodHistory, setFoodHistory] = useState<any[]>([]);
 
   const todayStats = {
     calories: { consumed: 1850, target: 2200 },
@@ -38,6 +44,21 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
     { day: "Sab", calories: 0 },
     { day: "Min", calories: 0 }
   ];
+
+  const handleAnalyze = async () => {
+    const data = await analyzeFood(input);
+    setResult(data);
+  };
+
+  useEffect(() => {
+    if (activeTab === 'history') {
+      fetch('http://localhost:3000/api/foods/history')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) setFoodHistory(data.histories);
+        });
+    }
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-smartfood-50 to-white py-8">
@@ -224,82 +245,94 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-                    Fitur Dalam Pengembangan
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Riwayat makanan lengkap akan tersedia segera dengan filter tanggal dan analisis trend.
-                  </p>
-                </div>
+                {foodHistory.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+                      Belum ada riwayat makanan
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Tambahkan makanan dari fitur analisis untuk melihat riwayat di sini.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {foodHistory.map((item) => (
+                      <Card key={item._id} className="border border-green-200">
+                        <CardContent className="py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                          <div>
+                            <div className="font-bold text-lg text-green-700">{item.foodName || item.nama}</div>
+                            <div className="text-sm text-muted-foreground">{new Date(item.timestamp).toLocaleString('id-ID')}</div>
+                            <div className="text-xs text-muted-foreground">{item.kategori}</div>
+                          </div>
+                          <div className="flex gap-6">
+                            <div className="text-center">
+                              <div className="font-bold text-green-700">{item.nutrisi?.kalori ?? '-'}</div>
+                              <div className="text-xs">Kalori</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="font-bold text-blue-700">{item.nutrisi?.protein ?? '-'}</div>
+                              <div className="text-xs">Protein</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="font-bold text-yellow-700">{item.nutrisi?.karbohidrat ?? '-'}</div>
+                              <div className="text-xs">Karbo</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="font-bold text-red-700">{item.nutrisi?.lemak ?? '-'}</div>
+                              <div className="text-xs">Lemak</div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="bg-white/80 backdrop-blur-sm border-smartfood-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <User className="w-5 h-5 text-smartfood-600" />
-                    <span>Profil Pengguna</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-between">
+            <Card className="bg-white/80 backdrop-blur-sm border-smartfood-200">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <User className="w-5 h-5 text-smartfood-600" />
+                  <span>Profil Pengguna</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Nama</span>
-                    <span className="font-medium">Pengguna Alun</span>
+                    <span className="font-medium">{user ? user.name : 'Guest'}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Email</span>
+                    <span className="font-medium">{user ? user.email : 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Usia</span>
                     <span className="font-medium">25 tahun</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Berat Badan</span>
                     <span className="font-medium">65 kg</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Tinggi Badan</span>
                     <span className="font-medium">170 cm</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Target</span>
-                    <Badge className="bg-smartfood-100 text-smartfood-800">Menjaga Berat</Badge>
+                    <Badge variant="secondary" className="bg-green-100 text-green-800">Menjaga Berat</Badge>
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/80 backdrop-blur-sm border-smartfood-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Target className="w-5 h-5 text-smartfood-600" />
-                    <span>Target Harian</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Kalori</span>
-                    <span className="font-medium">2200 kal</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Protein</span>
-                    <span className="font-medium">120g</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Karbohidrat</span>
-                    <span className="font-medium">275g</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Lemak</span>
-                    <span className="font-medium">80g</span>
-                  </div>
-                  <Button className="w-full mt-4 bg-smartfood-600 hover:bg-smartfood-700">
-                    Edit Profil
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+                <Button variant="outline" className="mt-6 w-full">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Edit Profil
+                </Button>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

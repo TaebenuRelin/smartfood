@@ -6,7 +6,7 @@ import {
   updateFood, 
   deleteFood,
   type Food
-} from '@/lib/supabaseApi';
+} from '@/lib/api';
 import { toast } from 'sonner';
 
 // Query keys

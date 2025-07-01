@@ -4,6 +4,10 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
+require('dotenv').config();
+
+const apiKey = process.env.GEMINI_API_KEY;
+
 export default tseslint.config(
   { ignores: ["dist"] },
   {

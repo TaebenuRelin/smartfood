@@ -5,15 +5,35 @@ import { Button } from "@/components/ui/button";
 interface NutritionDetailsModalProps {
   open: boolean;
   onClose: () => void;
-  nutrition: {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-    fiber: number;
-    [key: string]: any;
-  };
+  nutrition: { [key: string]: any };
 }
+
+const nutritionLabels: { [key: string]: string } = {
+  kalori: "Kalori (kkal)",
+  protein: "Protein (g)",
+  karbohidrat: "Karbohidrat (g)",
+  lemak: "Lemak (g)",
+  serat: "Serat (g)",
+  gula: "Gula (g)",
+  sodium: "Sodium (mg)",
+  kalsium: "Kalsium (mg)",
+  zat_besi: "Zat Besi (mg)",
+  vitamin_c: "Vitamin C (mg)",
+  vitamin_a: "Vitamin A (IU)",
+  vitamin_d: "Vitamin D (IU)",
+  vitamin_e: "Vitamin E (mg)",
+  vitamin_k: "Vitamin K (µg)",
+  vitamin_b1: "Vitamin B1 (mg)",
+  vitamin_b2: "Vitamin B2 (mg)",
+  vitamin_b3: "Vitamin B3 (mg)",
+  vitamin_b6: "Vitamin B6 (mg)",
+  vitamin_b12: "Vitamin B12 (µg)",
+  folat: "Folat (µg)",
+  magnesium: "Magnesium (mg)",
+  fosfor: "Fosfor (mg)",
+  kalium: "Kalium (mg)",
+  zinc: "Zinc (mg)",
+};
 
 const NutritionDetailsModal: React.FC<NutritionDetailsModalProps> = ({
   open,
@@ -29,22 +49,13 @@ const NutritionDetailsModal: React.FC<NutritionDetailsModalProps> = ({
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
-            <li>
-              <strong>Kalori:</strong> {nutrition.calories} kcal
-            </li>
-            <li>
-              <strong>Protein:</strong> {nutrition.protein} g
-            </li>
-            <li>
-              <strong>Karbohidrat:</strong> {nutrition.carbs} g
-            </li>
-            <li>
-              <strong>Lemak:</strong> {nutrition.fat} g
-            </li>
-            <li>
-              <strong>Serat:</strong> {nutrition.fiber} g
-            </li>
-            {/* Add more nutrition info here if available */}
+            {Object.entries(nutritionLabels).map(([key, label]) => (
+              nutrition[key] !== undefined && (
+                <li key={key}>
+                  <strong>{label}:</strong> {nutrition[key]}
+                </li>
+              )
+            ))}
           </ul>
           <Button className="mt-6 w-full" onClick={onClose}>
             Tutup

@@ -98,4 +98,14 @@ export const deleteFood = async (id: string): Promise<{ message: string }> => {
     throw new Error('Failed to delete food');
   }
   return response.json();
+};
+
+export const analyzeFood = async (namaMakanan: string) => {
+  const response = await fetch(`${API_BASE_URL}/gemini-food-analysis/analyze`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ namaMakanan }),
+  });
+  if (!response.ok) throw new Error('Gagal menganalisis makanan');
+  return response.json();
 }; 

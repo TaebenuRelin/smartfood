@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,61 +17,23 @@ import {
   Zap,
   Target,
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
-import FoodScanner from "@/components/FoodScanner";
-import Dashboard from "@/components/Dashboard";
 import ReminderAir from "@/components/ReminderAir";
-import MotivasiHarian from "@/components/MotivasiHarian";
-import UserGreeting from "@/components/UserGreeting"; // <-- Sudah diimport
+import UserGreeting from "@/components/UserGreeting";
 
 const Index = () => {
-  const [currentView, setCurrentView] = useState<
-    "home" | "scanner" | "dashboard"
-  >("home");
-  const { toast } = useToast();
-
-  const handleViewChange = (view: "home" | "scanner" | "dashboard") => {
-    setCurrentView(view);
-    toast({
-      title: "Navigasi",
-      description: `Beralih ke ${
-        view === "home"
-          ? "beranda"
-          : view === "scanner"
-          ? "scanner makanan"
-          : "dashboard"
-      }`,
-    });
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-smartfood-50 via-white to-smartfood-100">
-      <Header currentView={currentView} onViewChange={handleViewChange} />
-
-      {currentView === "home" && (
-        <div className="animate-fade-in">
-          <UserGreeting /> {/* <--- Sudah ditambahkan di awal blok home */}
-          <MotivasiHarian />
-          <Hero onStartScanning={() => handleViewChange("scanner")} />
-          <ReminderAir />
-          <Features />
-        </div>
-      )}
-
-      {currentView === "scanner" && (
-        <div className="animate-slide-up">
-          <FoodScanner onBackToHome={() => handleViewChange("home")} />
-        </div>
-      )}
-
-      {currentView === "dashboard" && (
-        <div className="animate-slide-up">
-          <Dashboard onBackToHome={() => handleViewChange("home")} />
-        </div>
-      )}
+      <div className="animate-fade-in">
+        <UserGreeting />
+        <Hero onStartScanning={() => {
+          // Arahkan ke halaman scanner menggunakan router
+          // Implementasi navigasi akan ditambahkan nanti
+        }} />
+        <ReminderAir />
+        <Features />
+      </div>
 
       {/* Footer */}
       <footer className="bg-smartfood-900 text-white py-12 mt-20">

@@ -31,6 +31,7 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
   });
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const { toast } = useToast();
+  const [selectedDay, setSelectedDay] = useState(new Date().getDay());
 
   const todayStats = {
     calories: { consumed: 1850, target: 2200 },
@@ -46,66 +47,206 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
     { time: "19:00", name: "Nasi Goreng", calories: 385, image: "🍳" }
   ];
 
-  const weeklyProgress = [
-    { day: "Sen", calories: 2100 },
-    { day: "Sel", calories: 1950 },
-    { day: "Rab", calories: 2250 },
-    { day: "Kam", calories: 2050 },
-    { day: "Jum", calories: 1850 },
-    { day: "Sab", calories: 0 },
-    { day: "Min", calories: 0 }
-  ];
-
-  const getNutritionNeeds = (user) => {
-    if (!user) return null;
-    // Rumus kebutuhan kalori dasar (Mifflin-St Jeor, asumsi laki-laki, usia 25)
-    const weight = user.weight || 65;
-    const height = user.height || 170;
-    const age = 25;
-    let bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-    let multiplier = 1.4; // asumsi aktivitas ringan
-    let calories = bmr * multiplier;
-    let protein = weight * 1.2;
-    let fat = weight * 0.8;
-    let carbs = (calories - (protein * 4 + fat * 9)) / 4;
-    // Penyesuaian target
-    if (user.targetPurpose === 'menurunkan berat badan') calories *= 0.8;
-    if (user.targetPurpose === 'menaikkan berat badan') calories *= 1.15;
-    if (user.targetPurpose === 'diet') calories *= 0.9;
-    return {
-      calories: Math.round(calories),
-      protein: Math.round(protein),
-      fat: Math.round(fat),
-      carbs: Math.round(carbs),
-    };
-  };
-
-  const foodTodaySuggestions = {
+  const weeklyFoodSuggestions = {
     'menurunkan berat badan': [
-      { name: 'Dada Ayam Rebus', time: '08:00', calories: 120, icon: '🍗' },
-      { name: 'Salad Sayur', time: '12:30', calories: 90, icon: '🥗' },
-      { name: 'Oatmeal', time: '15:00', calories: 150, icon: '🥣' },
-      { name: 'Ikan Kukus', time: '19:00', calories: 180, icon: '🐟' },
+      [
+        { name: 'Dada Ayam Rebus', time: '08:00', calories: 120, protein: 22, carbs: 0, fat: 2, icon: '🍗' },
+        { name: 'Salad Sayur', time: '12:30', calories: 90, protein: 2, carbs: 18, fat: 1, icon: '🥗' },
+        { name: 'Oatmeal', time: '15:00', calories: 150, protein: 5, carbs: 27, fat: 3, icon: '🥣' },
+        { name: 'Ikan Kukus', time: '19:00', calories: 180, protein: 20, carbs: 0, fat: 4, icon: '🐟' },
+      ],
+      [
+        { name: 'Telur Rebus', time: '08:00', calories: 80, protein: 6, carbs: 1, fat: 5, icon: '🥚' },
+        { name: 'Tumis Brokoli', time: '12:30', calories: 70, protein: 3, carbs: 10, fat: 1, icon: '🥦' },
+        { name: 'Smoothie Buah', time: '15:00', calories: 120, protein: 2, carbs: 25, fat: 1, icon: '🍓' },
+        { name: 'Tahu Kukus', time: '19:00', calories: 90, protein: 8, carbs: 2, fat: 4, icon: '🍢' },
+      ],
+      [
+        { name: 'Yogurt Rendah Lemak', time: '08:00', calories: 90, protein: 10, carbs: 5, fat: 4, icon: '🥛' },
+        { name: 'Sup Ayam', time: '12:30', calories: 110, protein: 15, carbs: 10, fat: 5, icon: '🍲' },
+        { name: 'Apel', time: '15:00', calories: 60, protein: 1, carbs: 15, fat: 0, icon: '🍏' },
+        { name: 'Ikan Panggang', time: '19:00', calories: 170, protein: 20, carbs: 0, fat: 5, icon: '🐟' },
+      ],
+      [
+        { name: 'Oatmeal', time: '08:00', calories: 150, protein: 5, carbs: 27, fat: 3, icon: '🥣' },
+        { name: 'Salad Buah', time: '12:30', calories: 100, protein: 2, carbs: 18, fat: 1, icon: '🍉' },
+        { name: 'Tahu Kukus', time: '15:00', calories: 90, protein: 8, carbs: 2, fat: 4, icon: '🍢' },
+        { name: 'Ayam Kukus', time: '19:00', calories: 120, protein: 20, carbs: 0, fat: 4, icon: '🍗' },
+      ],
+      [
+        { name: 'Telur Dadar', time: '08:00', calories: 110, protein: 10, carbs: 2, fat: 5, icon: '🍳' },
+        { name: 'Sayur Bening', time: '12:30', calories: 80, protein: 3, carbs: 10, fat: 1, icon: '🥬' },
+        { name: 'Pisang', time: '15:00', calories: 90, protein: 2, carbs: 18, fat: 1, icon: '🍌' },
+        { name: 'Ikan Kukus', time: '19:00', calories: 180, protein: 20, carbs: 0, fat: 4, icon: '🐟' },
+      ],
+      [
+        { name: 'Oatmeal', time: '08:00', calories: 150, protein: 5, carbs: 27, fat: 3, icon: '🥣' },
+        { name: 'Tumis Sayur', time: '12:30', calories: 90, protein: 3, carbs: 10, fat: 1, icon: '🥦' },
+        { name: 'Apel', time: '15:00', calories: 60, protein: 1, carbs: 15, fat: 0, icon: '🍏' },
+        { name: 'Ayam Kukus', time: '19:00', calories: 120, protein: 20, carbs: 0, fat: 4, icon: '🍗' },
+      ],
+      [
+        { name: 'Yogurt', time: '08:00', calories: 90, protein: 10, carbs: 5, fat: 4, icon: '🥛' },
+        { name: 'Sup Ayam', time: '12:30', calories: 110, protein: 15, carbs: 10, fat: 5, icon: '🍲' },
+        { name: 'Smoothie Buah', time: '15:00', calories: 120, protein: 2, carbs: 25, fat: 1, icon: '🍓' },
+        { name: 'Ikan Panggang', time: '19:00', calories: 170, protein: 20, carbs: 0, fat: 5, icon: '🐟' },
+      ],
     ],
     'menaikkan berat badan': [
-      { name: 'Nasi Goreng', time: '08:00', calories: 420, icon: '🍳' },
-      { name: 'Daging Sapi', time: '12:30', calories: 350, icon: '🥩' },
-      { name: 'Susu Full Cream', time: '15:00', calories: 200, icon: '🥛' },
-      { name: 'Alpukat', time: '19:00', calories: 250, icon: '🥑' },
+      [
+        { name: 'Nasi Goreng', time: '08:00', calories: 420, protein: 20, carbs: 50, fat: 10, icon: '🍳' },
+        { name: 'Daging Sapi', time: '12:30', calories: 350, protein: 50, carbs: 0, fat: 15, icon: '🥩' },
+        { name: 'Susu Full Cream', time: '15:00', calories: 200, protein: 10, carbs: 10, fat: 10, icon: '🥛' },
+        { name: 'Alpukat', time: '19:00', calories: 250, protein: 5, carbs: 20, fat: 5, icon: '🥑' },
+      ],
+      [
+        { name: 'Roti Tawar', time: '08:00', calories: 180, protein: 8, carbs: 30, fat: 5, icon: '🍞' },
+        { name: 'Ayam Goreng', time: '12:30', calories: 320, protein: 40, carbs: 0, fat: 15, icon: '🍗' },
+        { name: 'Keju', time: '15:00', calories: 150, protein: 10, carbs: 10, fat: 10, icon: '🧀' },
+        { name: 'Kentang Panggang', time: '19:00', calories: 210, protein: 4, carbs: 25, fat: 5, icon: '🥔' },
+      ],
+      [
+        { name: 'Nasi Uduk', time: '08:00', calories: 400, protein: 10, carbs: 50, fat: 15, icon: '🍚' },
+        { name: 'Daging Sapi', time: '12:30', calories: 350, protein: 50, carbs: 0, fat: 15, icon: '🥩' },
+        { name: 'Susu Full Cream', time: '15:00', calories: 200, protein: 10, carbs: 10, fat: 10, icon: '🥛' },
+        { name: 'Alpukat', time: '19:00', calories: 250, protein: 5, carbs: 20, fat: 5, icon: '🥑' },
+      ],
+      [
+        { name: 'Roti Tawar', time: '08:00', calories: 180, protein: 8, carbs: 30, fat: 5, icon: '🍞' },
+        { name: 'Ayam Goreng', time: '12:30', calories: 320, protein: 40, carbs: 0, fat: 15, icon: '🍗' },
+        { name: 'Keju', time: '15:00', calories: 150, protein: 10, carbs: 10, fat: 10, icon: '🧀' },
+        { name: 'Kentang Panggang', time: '19:00', calories: 210, protein: 4, carbs: 25, fat: 5, icon: '🥔' },
+      ],
+      [
+        { name: 'Nasi Goreng', time: '08:00', calories: 420, protein: 20, carbs: 50, fat: 10, icon: '🍳' },
+        { name: 'Daging Sapi', time: '12:30', calories: 350, protein: 50, carbs: 0, fat: 15, icon: '🥩' },
+        { name: 'Susu Full Cream', time: '15:00', calories: 200, protein: 10, carbs: 10, fat: 10, icon: '🥛' },
+        { name: 'Alpukat', time: '19:00', calories: 250, protein: 5, carbs: 20, fat: 5, icon: '🥑' },
+      ],
+      [
+        { name: 'Roti Tawar', time: '08:00', calories: 180, protein: 8, carbs: 30, fat: 5, icon: '🍞' },
+        { name: 'Ayam Goreng', time: '12:30', calories: 320, protein: 40, carbs: 0, fat: 15, icon: '🍗' },
+        { name: 'Keju', time: '15:00', calories: 150, protein: 10, carbs: 10, fat: 10, icon: '🧀' },
+        { name: 'Kentang Panggang', time: '19:00', calories: 210, protein: 4, carbs: 25, fat: 5, icon: '🥔' },
+      ],
+      [
+        { name: 'Nasi Uduk', time: '08:00', calories: 400, protein: 10, carbs: 50, fat: 15, icon: '🍚' },
+        { name: 'Daging Sapi', time: '12:30', calories: 350, protein: 50, carbs: 0, fat: 15, icon: '🥩' },
+        { name: 'Susu Full Cream', time: '15:00', calories: 200, protein: 10, carbs: 10, fat: 10, icon: '🥛' },
+        { name: 'Alpukat', time: '19:00', calories: 250, protein: 5, carbs: 20, fat: 5, icon: '🥑' },
+      ],
+      [
+        { name: 'Roti Tawar', time: '08:00', calories: 180, protein: 8, carbs: 30, fat: 5, icon: '🍞' },
+        { name: 'Ayam Goreng', time: '12:30', calories: 320, protein: 40, carbs: 0, fat: 15, icon: '🍗' },
+        { name: 'Keju', time: '15:00', calories: 150, protein: 10, carbs: 10, fat: 10, icon: '🧀' },
+        { name: 'Kentang Panggang', time: '19:00', calories: 210, protein: 4, carbs: 25, fat: 5, icon: '🥔' },
+      ],
     ],
     'jaga berat badan': [
-      { name: 'Nasi Gudeg', time: '08:00', calories: 420, icon: '🍛' },
-      { name: 'Gado-gado', time: '12:30', calories: 380, icon: '🥗' },
-      { name: 'Pisang Goreng', time: '15:00', calories: 180, icon: '🍌' },
-      { name: 'Nasi Goreng', time: '19:00', calories: 385, icon: '🍳' },
+      [
+        { name: 'Nasi Gudeg', time: '08:00', calories: 420, protein: 10, carbs: 50, fat: 10, icon: '🍛' },
+        { name: 'Gado-gado', time: '12:30', calories: 380, protein: 5, carbs: 30, fat: 15, icon: '🥗' },
+        { name: 'Pisang Goreng', time: '15:00', calories: 180, protein: 4, carbs: 20, fat: 5, icon: '🍌' },
+        { name: 'Nasi Goreng', time: '19:00', calories: 385, protein: 10, carbs: 50, fat: 10, icon: '🍳' },
+      ],
+      [
+        { name: 'Bubur Ayam', time: '08:00', calories: 250, protein: 5, carbs: 20, fat: 5, icon: '🍲' },
+        { name: 'Ayam Bakar', time: '12:30', calories: 320, protein: 20, carbs: 0, fat: 10, icon: '🍗' },
+        { name: 'Salad Buah', time: '15:00', calories: 120, protein: 4, carbs: 10, fat: 2, icon: '🍉' },
+        { name: 'Sup Sayur', time: '19:00', calories: 150, protein: 5, carbs: 10, fat: 5, icon: '🥬' },
+      ],
+      [
+        { name: 'Nasi Uduk', time: '08:00', calories: 400, protein: 10, carbs: 50, fat: 15, icon: '🍚' },
+        { name: 'Ayam Goreng', time: '12:30', calories: 320, protein: 20, carbs: 0, fat: 10, icon: '🍗' },
+        { name: 'Pisang', time: '15:00', calories: 90, protein: 4, carbs: 10, fat: 2, icon: '🍌' },
+        { name: 'Sup Ayam', time: '19:00', calories: 110, protein: 5, carbs: 5, fat: 5, icon: '🍲' },
+      ],
+      [
+        { name: 'Roti Tawar', time: '08:00', calories: 180, protein: 8, carbs: 30, fat: 5, icon: '🍞' },
+        { name: 'Ayam Panggang', time: '12:30', calories: 300, protein: 20, carbs: 0, fat: 10, icon: '🍗' },
+        { name: 'Yogurt', time: '15:00', calories: 90, protein: 10, carbs: 5, fat: 4, icon: '🥛' },
+        { name: 'Sup Sayur', time: '19:00', calories: 150, protein: 5, carbs: 10, fat: 5, icon: '🥬' },
+      ],
+      [
+        { name: 'Nasi Gudeg', time: '08:00', calories: 420, protein: 10, carbs: 50, fat: 10, icon: '🍛' },
+        { name: 'Gado-gado', time: '12:30', calories: 380, protein: 5, carbs: 30, fat: 15, icon: '🥗' },
+        { name: 'Pisang Goreng', time: '15:00', calories: 180, protein: 4, carbs: 20, fat: 5, icon: '🍌' },
+        { name: 'Nasi Goreng', time: '19:00', calories: 385, protein: 10, carbs: 50, fat: 10, icon: '🍳' },
+      ],
+      [
+        { name: 'Bubur Ayam', time: '08:00', calories: 250, protein: 5, carbs: 20, fat: 5, icon: '🍲' },
+        { name: 'Ayam Bakar', time: '12:30', calories: 320, protein: 20, carbs: 0, fat: 10, icon: '🍗' },
+        { name: 'Salad Buah', time: '15:00', calories: 120, protein: 4, carbs: 10, fat: 2, icon: '🍉' },
+        { name: 'Sup Sayur', time: '19:00', calories: 150, protein: 5, carbs: 10, fat: 5, icon: '🥬' },
+      ],
+      [
+        { name: 'Nasi Uduk', time: '08:00', calories: 400, protein: 10, carbs: 50, fat: 15, icon: '🍚' },
+        { name: 'Ayam Goreng', time: '12:30', calories: 320, protein: 20, carbs: 0, fat: 10, icon: '🍗' },
+        { name: 'Pisang', time: '15:00', calories: 90, protein: 4, carbs: 10, fat: 2, icon: '🍌' },
+        { name: 'Sup Ayam', time: '19:00', calories: 110, protein: 5, carbs: 5, fat: 5, icon: '🍲' },
+      ],
     ],
     'diet': [
-      { name: 'Oatmeal', time: '08:00', calories: 150, icon: '🥣' },
-      { name: 'Telur Rebus', time: '12:30', calories: 80, icon: '🥚' },
-      { name: 'Smoothie Buah', time: '15:00', calories: 120, icon: '🍓' },
-      { name: 'Salad Sayur', time: '19:00', calories: 90, icon: '🥗' },
+      [
+        { name: 'Oatmeal', time: '08:00', calories: 150, protein: 5, carbs: 27, fat: 3, icon: '🥣' },
+        { name: 'Telur Rebus', time: '12:30', calories: 80, protein: 6, carbs: 1, fat: 5, icon: '🥚' },
+        { name: 'Smoothie Buah', time: '15:00', calories: 120, protein: 2, carbs: 25, fat: 1, icon: '🍓' },
+        { name: 'Salad Sayur', time: '19:00', calories: 90, protein: 2, carbs: 18, fat: 1, icon: '🥗' },
+      ],
+      [
+        { name: 'Yogurt', time: '08:00', calories: 90, protein: 10, carbs: 5, fat: 4, icon: '🥛' },
+        { name: 'Sup Ayam', time: '12:30', calories: 110, protein: 15, carbs: 10, fat: 5, icon: '🍲' },
+        { name: 'Apel', time: '15:00', calories: 60, protein: 1, carbs: 15, fat: 0, icon: '🍏' },
+        { name: 'Ikan Panggang', time: '19:00', calories: 170, protein: 20, carbs: 0, fat: 5, icon: '🐟' },
+      ],
+      [
+        { name: 'Oatmeal', time: '08:00', calories: 150, protein: 5, carbs: 27, fat: 3, icon: '🥣' },
+        { name: 'Salad Buah', time: '12:30', calories: 100, protein: 2, carbs: 18, fat: 1, icon: '🍉' },
+        { name: 'Tahu Kukus', time: '15:00', calories: 90, protein: 8, carbs: 2, fat: 4, icon: '🍢' },
+        { name: 'Ayam Kukus', time: '19:00', calories: 120, protein: 20, carbs: 0, fat: 4, icon: '🍗' },
+      ],
+      [
+        { name: 'Telur Dadar', time: '08:00', calories: 110, protein: 10, carbs: 2, fat: 5, icon: '🍳' },
+        { name: 'Sayur Bening', time: '12:30', calories: 80, protein: 3, carbs: 10, fat: 1, icon: '🥬' },
+        { name: 'Pisang', time: '15:00', calories: 90, protein: 2, carbs: 18, fat: 1, icon: '🍌' },
+        { name: 'Ikan Kukus', time: '19:00', calories: 180, protein: 20, carbs: 0, fat: 4, icon: '🐟' },
+      ],
+      [
+        { name: 'Oatmeal', time: '08:00', calories: 150, protein: 5, carbs: 27, fat: 3, icon: '🥣' },
+        { name: 'Tumis Sayur', time: '12:30', calories: 90, protein: 3, carbs: 10, fat: 1, icon: '🥦' },
+        { name: 'Apel', time: '15:00', calories: 60, protein: 1, carbs: 15, fat: 0, icon: '🍏' },
+        { name: 'Ayam Kukus', time: '19:00', calories: 120, protein: 20, carbs: 0, fat: 4, icon: '🍗' },
+      ],
+      [
+        { name: 'Yogurt', time: '08:00', calories: 90, protein: 10, carbs: 5, fat: 4, icon: '🥛' },
+        { name: 'Sup Ayam', time: '12:30', calories: 110, protein: 15, carbs: 10, fat: 5, icon: '🍲' },
+        { name: 'Smoothie Buah', time: '15:00', calories: 120, protein: 2, carbs: 25, fat: 1, icon: '🍓' },
+        { name: 'Ikan Panggang', time: '19:00', calories: 170, protein: 20, carbs: 0, fat: 5, icon: '🐟' },
+      ],
+      [
+        { name: 'Oatmeal', time: '08:00', calories: 150, protein: 5, carbs: 27, fat: 3, icon: '🥣' },
+        { name: 'Telur Rebus', time: '12:30', calories: 80, protein: 6, carbs: 1, fat: 5, icon: '🥚' },
+        { name: 'Smoothie Buah', time: '15:00', calories: 120, protein: 2, carbs: 25, fat: 1, icon: '🍓' },
+        { name: 'Salad Sayur', time: '19:00', calories: 90, protein: 2, carbs: 18, fat: 1, icon: '🥗' },
+      ],
     ],
   };
+  const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+  const weeklyProgressCalories = (weeklyFoodSuggestions[user?.targetPurpose || 'jaga berat badan'] || []).map(
+    (meals) => meals.reduce((sum, meal) => sum + (meal.calories || 0), 0)
+  );
+  const progressMingguan = days.map((day, idx) => ({
+    day,
+    calories: weeklyProgressCalories[idx] || 0,
+  }));
+  const todayMeals = weeklyFoodSuggestions[user?.targetPurpose || 'jaga berat badan'][selectedDay];
+  const totalNutrisi = todayMeals.reduce((acc, meal) => ({
+    calories: acc.calories + (meal.calories || 0),
+    protein: acc.protein + (meal.protein || 0),
+    carbs: acc.carbs + (meal.carbs || 0),
+    fat: acc.fat + (meal.fat || 0),
+  }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
 
   const handleAnalyze = async () => {
     const data = await analyzeFood(input);
@@ -151,6 +292,19 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
     }
   }, [activeTab, user]);
 
+  // Hitung total kalori mingguan dari makanan mingguan
+  const weeklyCalories = (weeklyFoodSuggestions[user?.targetPurpose || 'jaga berat badan'] || []).map(
+    (meals) => meals.reduce((sum, meal) => sum + (meal.calories || 0), 0)
+  );
+  const weeklyProgress = days.map((day, idx) => ({
+    day,
+    calories: weeklyCalories[idx] || 0,
+  }));
+
+  if (!user) {
+    return <div className="flex items-center justify-center min-h-screen text-lg text-muted-foreground">Memuat data akun...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-smartfood-50 to-white py-8">
       <div className="container mx-auto px-4 max-w-7xl">
@@ -188,18 +342,15 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
                 <CardContent>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-2xl font-bold text-smartfood-600">
-                      {todayStats.calories.consumed}
+                      {totalNutrisi.calories}
                     </span>
                     <span className="text-sm text-muted-foreground">
                       / {todayStats.calories.target}
                     </span>
                   </div>
-                  <Progress 
-                    value={(todayStats.calories.consumed / todayStats.calories.target) * 100} 
-                    className="h-2"
-                  />
+                  <Progress value={(totalNutrisi.calories / todayStats.calories.target) * 100} className="h-2" />
                   <p className="text-xs text-muted-foreground mt-2">
-                    {todayStats.calories.target - todayStats.calories.consumed} tersisa
+                    {todayStats.calories.target - totalNutrisi.calories} tersisa
                   </p>
                 </CardContent>
               </Card>
@@ -211,16 +362,13 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
                 <CardContent>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-2xl font-bold text-blue-600">
-                      {todayStats.protein.consumed}g
+                      {totalNutrisi.protein}g
                     </span>
                     <span className="text-sm text-muted-foreground">
                       / {todayStats.protein.target}g
                     </span>
                   </div>
-                  <Progress 
-                    value={(todayStats.protein.consumed / todayStats.protein.target) * 100} 
-                    className="h-2"
-                  />
+                  <Progress value={(totalNutrisi.protein / todayStats.protein.target) * 100} className="h-2" />
                 </CardContent>
               </Card>
 
@@ -231,16 +379,13 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
                 <CardContent>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-2xl font-bold text-yellow-600">
-                      {todayStats.carbs.consumed}g
+                      {totalNutrisi.carbs}g
                     </span>
                     <span className="text-sm text-muted-foreground">
                       / {todayStats.carbs.target}g
                     </span>
                   </div>
-                  <Progress 
-                    value={(todayStats.carbs.consumed / todayStats.carbs.target) * 100} 
-                    className="h-2"
-                  />
+                  <Progress value={(totalNutrisi.carbs / todayStats.carbs.target) * 100} className="h-2" />
                 </CardContent>
               </Card>
 
@@ -251,16 +396,13 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
                 <CardContent>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-2xl font-bold text-red-600">
-                      {todayStats.fat.consumed}g
+                      {totalNutrisi.fat}g
                     </span>
                     <span className="text-sm text-muted-foreground">
                       / {todayStats.fat.target}g
                     </span>
                   </div>
-                  <Progress 
-                    value={(todayStats.fat.consumed / todayStats.fat.target) * 100} 
-                    className="h-2"
-                  />
+                  <Progress value={(totalNutrisi.fat / todayStats.fat.target) * 100} className="h-2" />
                 </CardContent>
               </Card>
             </div>
@@ -276,12 +418,12 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {weeklyProgress.map((day, index) => (
+                    {progressMingguan.map((day, index) => (
                       <div key={index} className="flex items-center justify-between">
-                        <span className="text-sm font-medium w-8">{day.day}</span>
+                        <span className="text-sm font-medium w-12">{day.day}</span>
                         <div className="flex-1 mx-4">
-                          <Progress 
-                            value={day.calories > 0 ? (day.calories / 2200) * 100 : 0} 
+                          <Progress
+                            value={day.calories > 0 ? (day.calories / todayStats.calories.target) * 100 : 0}
                             className="h-2"
                           />
                         </div>
@@ -298,21 +440,32 @@ const Dashboard = ({ onBackToHome }: DashboardProps) => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <Utensils className="w-5 h-5 text-smartfood-600" />
-                    <span>Makanan Hari Ini</span>
+                    <span>Makanan Mingguan</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {(foodTodaySuggestions[user?.targetPurpose] || foodTodaySuggestions['jaga berat badan']).map((meal, index) => (
-                      <div key={index} className="flex items-center space-x-4 p-3 bg-smartfood-50 rounded-lg">
-                        <span className="text-2xl">{meal.icon}</span>
-                        <div className="flex-1">
-                          <div className="font-medium">{meal.name}</div>
-                          <div className="text-sm text-muted-foreground">{meal.time}</div>
-                        </div>
-                        <Badge variant="outline">{meal.calories} kal</Badge>
-                      </div>
+                  <div className="mb-4 flex flex-wrap gap-2">
+                    {days.map((day, idx) => (
+                      <button
+                        key={day}
+                        className={`px-3 py-1 rounded-full border text-sm font-medium transition-colors ${selectedDay === idx ? 'bg-smartfood-600 text-white' : 'bg-white text-smartfood-700 border-smartfood-200 hover:bg-smartfood-100'}`}
+                        onClick={() => setSelectedDay(idx)}
+                      >
+                        {day}
+                      </button>
                     ))}
+                  </div>
+                  <div className="bg-smartfood-50 rounded-lg p-4">
+                    <div className="font-bold mb-2 text-smartfood-700">{days[selectedDay]}</div>
+                    <ul className="space-y-2">
+                      {todayMeals.map((meal, idx) => (
+                        <li key={idx} className="flex items-center gap-2">
+                          <span className="text-xl">{meal.icon}</span>
+                          <span className="flex-1">{meal.name} <span className="text-xs text-muted-foreground">{meal.time}</span></span>
+                          <Badge variant="outline">{meal.calories} kal</Badge>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </CardContent>
               </Card>
